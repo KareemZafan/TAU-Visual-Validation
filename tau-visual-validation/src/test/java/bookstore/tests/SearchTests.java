@@ -20,10 +20,5 @@ public class SearchTests extends BaseTests {
         searchPage.search(bookTitle);
         validateWindow();
     }
-
-    @Test
-    public void checkSearchResults() {
-        driver.get("https://eyes.applitools.com/app/test-results/");
-        
-    }
+    
 }
