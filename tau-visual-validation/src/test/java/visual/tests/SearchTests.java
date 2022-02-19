@@ -2,6 +2,7 @@ package bookstore.tests;
 
 import automation_bookstore.pages.SearchPage;
 import base.BaseTests;
+import org.openqa.selenium.By;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -18,7 +19,15 @@ public class SearchTests extends BaseTests {
     public void testSearchByFullTitle() {
         String bookTitle = "Agile Testing";
         searchPage.search(bookTitle);
-        validateWindow();
+        eyesManager.validateWindow();
     }
-    
+
+    @Test
+    public void testSearchAgileTestingBook() {
+        String bookTitle = "Agile Testing";
+        searchPage.search(bookTitle);
+        eyesManager.validateElement(By.id("pid3"));
+    }
+
+
 }
