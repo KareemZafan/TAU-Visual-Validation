@@ -1,4 +1,4 @@
-package bookstore.tests;
+package visual.tests;
 
 import automation_bookstore.pages.SearchPage;
 import base.BaseTests;

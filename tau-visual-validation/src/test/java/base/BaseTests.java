@@ -1,6 +1,5 @@
 package base;
 
-import com.applitools.eyes.selenium.Eyes;
 import com.google.common.io.Files;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.openqa.selenium.OutputType;
@@ -15,39 +14,45 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import the_internet.herkuapp.pages.HomePage;
 import utils.CookieManager;
+import utils.EyesManager;
 import utils.WindowManager;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Properties;
 
 public class BaseTests {
-
-    protected static Eyes eyes;
-    protected HomePage homePage;
-    protected WebDriver driver;
     protected static Properties properties;
-
+    protected static WebDriver driver;
+    protected static EyesManager eyesManager;
+    protected HomePage homePage;
 
     @BeforeClass
     public void setUp() {
-        WebDriverManager.firefoxdriver().setup();
-        driver = new FirefoxDriver(getFirefoxOptions());
-        initiateKeys();
+        try {
+            WebDriverManager.firefoxdriver().setup();
+            driver = new FirefoxDriver(getFirefoxOptions());
+            properties = System.getProperties();
+            properties.load(new FileInputStream(new File("./src/main/resources/config.properties")));
+            eyesManager = new EyesManager(driver, "Automation Book Store");
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.out.println(e.getMessage());
+        }
     }
 
     @BeforeMethod
     public void goHome() {
-        driver.get(properties.getProperty("site.bookstore.url"));
+        driver.get(properties.getProperty("sites.invoices.url"));
         homePage = new HomePage(driver);
     }
 
     @AfterClass
     public void tearDown() {
         driver.quit();
-        eyes.abortIfNotClosed();
+        eyesManager.abort();
     }
 
     @AfterMethod
@@ -78,24 +83,5 @@ public class BaseTests {
         return new CookieManager(driver);
     }
 
-    private static void initiateKeys() {
-        eyes = new Eyes();
-        FileInputStream fis;
-        try {
-            fis = new FileInputStream(new File("./src/main/resources/config.properties"));
-            properties = new Properties();
-            properties.load(fis);
-            eyes.setApiKey(properties.getProperty("applitools.api.key"));
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 
-    public void validateWindow() {
-        eyes.open(driver, "Automation Book Store", Thread.currentThread().getStackTrace()[2].getMethodName());
-        eyes.checkWindow();
-        eyes.close();
-    }
 }
